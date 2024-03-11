@@ -1,0 +1,60 @@
+﻿@page "/"
+
+@inherits LayoutComponentBase
+
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using TodoListApp.Models
+@using TodoListApp.Services
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <EditForm FormName="Todo" Model="Todo" OnSubmit="@Add" Enhance>
+                        <div class="hstack gap-2">
+                            <label class="label-control">Name</label>
+                            <InputText @bind-Value="Todo.Name" class="form-control"></InputText>
+
+                            <label class="label-control">Description</label>
+                            <InputText @bind-Value="Todo.Description" class="form-control"></InputText>
+
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-save" /></button>
+                            <button @onclick="@(() => ClearForm())" type="button" class="btn btn-danger"><i class="fa fa-eraser" /></button>
+                        </div>
+                    </EditForm>
+                </div>
+
+                <div class="card-body">
+                    <QuickGrid Items="@TodoQueryable" style="width: 100%">
+
+                        <TemplateColumn IsDefaultSortColumn="@true"
+                                        InitialSortDirection="@SortDirection.Descending"
+                                        Title="Completed"
+                                        Align="@Align.Center"
+                                        Sortable="@true"
+                                        SortBy="@SortByCompleted">
+                            <input type="checkbox" id="scales" name="scales" checked="@(((Todo)context).Completed)" @onclick="@(() => HandleComplete(context))" />
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Name">
+                            <label class="@(IsCompleted(context) ? "line-through" : string.Empty)">@(((Todo)context).Name)</label>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Description">
+                            <label class="@(IsCompleted(context) ? "line-through" : string.Empty)">@(((Todo)context).Description)</label>
+                        </TemplateColumn>
+
+                        <TemplateColumn Title="Action">
+                            <button @onclick="@(() => Edit(context))" class="btn btn-primary"><i class="fa fa-edit" /></button>
+
+                            <button @onclick="@(() => Delete(context))" class="btn btn-danger"><i class="fa fa-trash" /></button>
+                        </TemplateColumn>
+                    </QuickGrid>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
